@@ -18,3 +18,14 @@ if __name__ == '__main__':
     
     print('Fermeture du client')
     client_socket.close()
+
+class Client:
+    def __init__(self):
+        self.clsocket = socket.socket()
+        self.port = 10000
+        self.message = ''
+
+    def connect(self):
+        self.clsocket.connect((self))
+        
+
