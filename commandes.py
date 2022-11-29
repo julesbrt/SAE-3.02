@@ -68,7 +68,7 @@ def getram():  # fonction qui renvoi la mémoire vive
     ramtotal = psutil.virtual_memory().total/ 1024 / 1024 / 1024
     ramlibre = psutil.virtual_memory().free/ 1024 / 1024 / 1024
     ramutil = psutil.virtual_memory().used/ 1024 / 1024 / 1024
-    return f"RAM totale: {round(ramtotal, 2)} Go, RAM libre: {ramlibre} Go, RAM utilisée: {ramutil} Go"
+    return f"RAM totale: {round(ramtotal, 2)} Go, RAM libre: {round(ramlibre, 2)} Go, RAM utilisée: {round(ramutil, 2)} Go"
 
 
 def getcpu():  # fonction qui renvoi l'utilisation du processeur
