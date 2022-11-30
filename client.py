@@ -17,10 +17,11 @@ class Client:
         self.port = port
         self.host = host
         self.message = ''
-        self.connection()
+        self.iskilled = False
 
     def connection(self):
         self.clsocket.connect((self.host, self.port))
+        
         thread = threading.Thread(target=self.reception, args=[self.clsocket])
         thread.start()
         # print('Fermeture du client')
@@ -29,17 +30,27 @@ class Client:
     def envoi(self, message):
         self.clsocket.send(message.encode())
 
-    def reception(self, connection):
+    def reception(self):
         msgserv = ""
-        while message != DISCONNECT and msgserv != DISCONNECT and message != KILL and msgserv != KILL:
+        while message != DISCONNECT and msgserv != DISCONNECT and message != KILL and msgserv != KILL and self.iskilled == False:
             msgserv = self.clsocket.recv(1024).decode()
             print(msgserv)
+        
+    def kill(self):
+        self.iskilled = True
+        self.clsocket.close()
+        print('Fermeture du client')
+
 
 if __name__ == '__main__':
     client = Client(HOST, PORT)
-    #client2 = Client(HOST, int(sys.argv[1]))
-    message = ''
-    while message != DISCONNECT and message != KILL: 
-        message = input('Entrer une commande: ')
-        client.envoi(message)
-        #client2.envoi(message)
+    try:
+        client.connection()
+        #client2 = Client(HOST, int(sys.argv[1]))
+        message = ''
+        while message != DISCONNECT and message != KILL: 
+            message = input('Entrer une commande: ')
+            client.envoi(message)
+            #client2.envoi(message)
+    except KeyboardInterrupt:
+        client.kill()
