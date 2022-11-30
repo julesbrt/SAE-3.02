@@ -3,8 +3,111 @@ import platform
 import psutil
 import subprocess
 import sys
-import json
+import json  # sera utilisé si j'ai le temps une fois les principales fonctionnalités implémentées
 
+
+def reponse(msg):  # fonction de réponse
+    if msg == 'OS':
+        return getos()
+
+    elif msg == 'RAM':
+        return getram()
+
+    elif msg == 'CPU':
+        return getcpu()
+
+    elif msg == 'IP':
+        return getip()
+
+    elif msg == 'Name':
+        return getname()
+
+    elif msg == 'getall':
+        return getall()
+
+    elif msg == 'kill':
+        return ''
+
+    elif msg == 'reset':
+        return ''
+
+    elif msg == 'disconnect':
+        return ''
+
+    else:
+        return 'Commande inconnue'
+
+
+def getos():  # fonction qui renvoi le système d'exploitation
+    return platform.system()
+
+
+def getram():  # fonction qui renvoi la mémoire vive
+    """return json.dumps({
+            'total': str(psutil.virtual_memory().total),
+            'used': str(psutil.virtual_memory().used),
+            'free': str(psutil.virtual_memory().free)
+        })"""
+    ramtotal = psutil.virtual_memory().total / 1024 / 1024 / \
+        1024  # conversion en Go, on pourrait aussi diviser par 1 073 741 824.
+    ramlibre = psutil.virtual_memory().free / 1024 / 1024 / 1024
+    ramutil = psutil.virtual_memory().used / 1024 / 1024 / 1024
+    return f"RAM totale: {round(ramtotal, 2)} Go, RAM libre: {round(ramlibre, 2)} Go, RAM utilisée: {round(ramutil, 2)} Go"
+
+
+def getcpu():  # fonction qui renvoi l'utilisation du processeur
+    cpu = str(psutil.cpu_percent())
+    return f"Utilisation du processeur: {cpu}%"
+
+
+def getip():  # fonction qui renvoi l'adresse IP du serveur en fonction de son OS
+
+    # version en utilisant subprocess
+    if sys.platform == 'win32':  # récupération de l'IP si l'OS est Windows
+        ipconfig = subprocess.Popen(
+            'ipconfig', shell=True, stdout=subprocess.PIPE).stdout.read().decode(errors='ignore')
+        # mise en forme de l'adresse IP pour l'affichage
+        ip = str(ipconfig.split('IPv4')[1].split(':')[1].split(' ')[1])
+        return ip.rstrip()  # enlève le retour à la ligne
+
+    elif sys.platform == 'linux':  # récupération de l'IP si l'OS est Linux
+        ip = subprocess.Popen(
+            "ip a | grep inet | grep global | awk '{print $2}'", shell=True, stdout=subprocess.PIPE).stdout.read().decode()
+        # mise en forme de l'adresse IP pour l'affichage
+        ip = ip.split("\n")[:-1]
+        return ip
+
+    # récupération de l'IP si l'OS est Mac (Darwin)
+    elif sys.platform == 'darwin':
+        ip = subprocess.Popen(
+            'ifconfig en0 | grep inet | awk \'$1=="inet" {print $2}\'', shell=True, stdout=subprocess.PIPE).stdout.read().decode()
+        return ip  # trouvé sur internet pusique je n'ai pas de Mac pour tester la commande
+
+    # version en utilisant psutil
+
+    """from socket import AF_INET
+    from ipaddress import IPv4Network
+
+    def get_ip():
+        ipaddr = []    
+        for nic, addrs in psutil.net_if_addrs().items():
+            for addr in addrs:
+                address = addr.address
+                # Permet d'ignorer les adresses de type 169.254.x.x sur mon ordinateur
+                if addr.family == AF_INET and not address.startswith("169.254"):
+                    ipaddr.append(f"{address}/{IPv4Network('0.0.0.0/' +  addr.netmask).prefixlen}")
+        return ipaddr"""
+
+
+def getname():  # fonction qui renvoi le nom du serveur
+    return platform.node()
+
+
+def getall():  # fonction qui renvoi toutes les informations
+    return f"OS: {getos()}\n RAM: {getram()}\n CPU: {getcpu()}\n IP: {getip()}\n Name: {getname()}"
+
+
+# commandes libres
 """DOScmd = []
 Lcmd = []
 Pwcmd = []
@@ -34,70 +137,6 @@ def commandes(self, msg, DOScmd, Lcmd, Pwcmd, cmd):
     if platform.system() == 'darwin':
         for i in Pwcmd:
             return subprocess.Popen(i, shell=True, stdout=subprocess.PIPE).stdout.read().decode()"""
-
-
-def reponse(msg):  # fonction de réponse
-    if msg == 'OS':
-        return getos()
-
-    elif msg == 'RAM':
-        return getram()
-
-    elif msg == 'CPU':
-        return getcpu()
-
-    elif msg == 'IP':
-        return getip()
-
-    elif msg == 'Name':
-        return getname()
-    else:
-        return 'Commande inconnue'
-
-
-def getos():  # fonction qui renvoi le système d'exploitation
-    return platform.system()
-
-
-def getram():  # fonction qui renvoi la mémoire vive
-    """return json.dumps({
-            'total': str(psutil.virtual_memory().total),
-            'used': str(psutil.virtual_memory().used),
-            'free': str(psutil.virtual_memory().free)
-        })"""
-    ramtotal = psutil.virtual_memory().total/ 1024 / 1024 / 1024
-    ramlibre = psutil.virtual_memory().free/ 1024 / 1024 / 1024
-    ramutil = psutil.virtual_memory().used/ 1024 / 1024 / 1024
-    return f"RAM totale: {round(ramtotal, 2)} Go, RAM libre: {round(ramlibre, 2)} Go, RAM utilisée: {round(ramutil, 2)} Go"
-
-
-def getcpu():  # fonction qui renvoi l'utilisation du processeur
-    return str(psutil.cpu_percent())
-
-
-def getip():  # fonction qui renvoi l'adresse IP du serveur en fonction de son OS
-
-    if sys.platform == 'win32':  # récupération de l'IP si l'OS est Windows
-        ipconfig = subprocess.Popen(
-            'ipconfig', shell=True, stdout=subprocess.PIPE).stdout.read().decode()
-        ip = ipconfig.split('IPv4')[1].split(':')[1].split(' ')[1]
-        return ip
-
-    elif sys.platform == 'linux':  # récupération de l'IP si l'OS est Linux
-        ip = subprocess.Popen(
-            "ip a | grep inet | grep global | awk '{print $2}'", shell=True, stdout=subprocess.PIPE).stdout.read().decode()
-        ip = ip.split("\n")[:-1]
-        return ip
-
-    # récupération de l'IP si l'OS est Mac (Darwin)
-    elif sys.platform == 'darwin':
-        ip = subprocess.Popen(
-            'ifconfig en0 | grep inet | awk \'$1=="inet" {print $2}\'', shell=True, stdout=subprocess.PIPE).stdout.read().decode()
-        return ip  # trouvé sur internet pusique je n'ai pas de Mac pour tester la commande
-
-
-def getname():  # fonction qui renvoi le nom du serveur
-    return platform.node()
 
 
 def main():
