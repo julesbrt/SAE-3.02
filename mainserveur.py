@@ -52,4 +52,7 @@ class Serveur:
 
 
 if __name__ == '__main__':
-    Serveur()
+    try:
+        Serveur()
+    except KeyboardInterrupt:
+        print('Fermeture du serveur')

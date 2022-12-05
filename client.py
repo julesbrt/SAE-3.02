@@ -6,8 +6,8 @@ HOST = '127.0.0.1'
 PORT = 10000
 message = ''
 # déconnexion de l’interface permettant de libérer la machine monitorée pour permettre de libérer le serveur pour d’autres requêtes
-DISCONNECT = 'DISCONNECT'
-KILL = 'KILL'  # tue le serveur
+DISCONNECT = 'disconnect'
+KILL = 'kill'  # tue le serveur
 RESET = 'reset'  # reset du serveur
 msgserv = ''
 
@@ -22,7 +22,7 @@ class Client:
     def connection(self):
         self.clsocket.connect((self.host, self.port))
         
-        thread = threading.Thread(target=self.reception, args=[self.clsocket])
+        thread = threading.Thread(target=self.reception)
         thread.start()
         # print('Fermeture du client')
         # self.clsocket.close()
