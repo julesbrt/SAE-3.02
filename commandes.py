@@ -4,6 +4,7 @@ import psutil
 import subprocess
 import sys
 import json  # sera utilisé si j'ai le temps une fois les principales fonctionnalités implémentées
+import os
 
 
 def reponse(msg):  # fonction de réponse
@@ -35,7 +36,7 @@ def reponse(msg):  # fonction de réponse
         return ''
 
     elif msg == 'reset':
-        return ''
+        return getreset()
 
     else:
         return 'Commande inconnue'
@@ -58,7 +59,7 @@ def getram():  # fonction qui renvoi la mémoire vive
     return f"RAM totale: {round(ramtotal, 2)} Go, RAM libre: {round(ramlibre, 2)} Go, RAM utilisée: {round(ramutil, 2)} Go"
 
 
-def getcpu():  # fonction qui renvoi l'utilisation du processeur
+def getcpu(self):  # fonction qui renvoi l'utilisation du processeur
     cpu = str(psutil.cpu_percent())
     return f"Utilisation du processeur: {cpu}%"
 
@@ -110,37 +111,6 @@ def getall():  # fonction qui renvoi toutes les informations
     return f"OS: {getos()}\n RAM: {getram()}\n CPU: {getcpu()}\n IP: {getip()}\n Name: {getname()}"
 
 
-# commandes libres
-"""DOScmd = []
-Lcmd = []
-Pwcmd = []
-cmd = []
-
-def commandes(self, msg, DOScmd, Lcmd, Pwcmd, cmd):
-    if msg == 'dir' or msg == 'mkdir':
-        DOScmd.append(msg)
-
-    elif msg == 'ls -la':
-        Lcmd.append(msg)
-
-    elif msg == 'get-process':
-        Pwcmd.append(msg)
-
-    elif msg == 'python --version' or msg == 'ping  192.157.65.78':
-        cmd.append(msg)
-        
-    if platform.system() == 'win32':
-        for i in DOScmd:
-            return subprocess.Popen(i, shell=True, stdout=subprocess.PIPE).stdout.read().decode()
-    
-    if platform.system() == 'linux':
-        for i in Lcmd:
-            return subprocess.Popen(i, shell=True, stdout=subprocess.PIPE).stdout.read().decode()
-    
-    if platform.system() == 'darwin':
-        for i in Pwcmd:
-            return subprocess.Popen(i, shell=True, stdout=subprocess.PIPE).stdout.read().decode()"""
-
 """def getgraph(self):
     import matplotlib.pyplot as plt
     from matplotlib.animation import FuncAnimation
@@ -174,6 +144,13 @@ def commandes(self, msg, DOScmd, Lcmd, Pwcmd, cmd):
 
     plt.show()"""
 
+def getreset():
+    if sys.platform == 'win32':
+        os.system('shutdown -r -t 0')
+    elif sys.platform == 'linux':
+        os.system('reboot')
+    elif sys.platform == 'darwin':
+        os.system('sudo shutdown -r now')
 
 def main():
     mainserveur.Serveur()

@@ -50,6 +50,11 @@ class Serveur:
         socketserv.close()
         print('Fermeture du serveur')
 
+    def kill(self):
+        self.iskilled = True
+        self.socketserv.close()
+        print('Fermeture du client')
+
 
 if __name__ == '__main__':
     try:
