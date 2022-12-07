@@ -53,6 +53,7 @@ class Serveur:
     def kill(self):
         self.iskilled = True
         self.socketserv.close()
+        self.conn.close()
         print('Fermeture du client')
 
 

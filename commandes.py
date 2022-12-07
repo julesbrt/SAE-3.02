@@ -36,7 +36,7 @@ def reponse(msg):  # fonction de réponse
         return ''
 
     elif msg == 'reset':
-        return getreset()
+        return ()
 
     else:
         return 'Commande inconnue'
@@ -59,7 +59,7 @@ def getram():  # fonction qui renvoi la mémoire vive
     return f"RAM totale: {round(ramtotal, 2)} Go, RAM libre: {round(ramlibre, 2)} Go, RAM utilisée: {round(ramutil, 2)} Go"
 
 
-def getcpu(self):  # fonction qui renvoi l'utilisation du processeur
+def getcpu():  # fonction qui renvoi l'utilisation du processeur
     cpu = str(psutil.cpu_percent())
     return f"Utilisation du processeur: {cpu}%"
 
@@ -111,6 +111,8 @@ def getall():  # fonction qui renvoi toutes les informations
     return f"OS: {getos()}\n RAM: {getram()}\n CPU: {getcpu()}\n IP: {getip()}\n Name: {getname()}"
 
 
+
+
 """def getgraph(self):
     import matplotlib.pyplot as plt
     from matplotlib.animation import FuncAnimation
@@ -144,7 +146,7 @@ def getall():  # fonction qui renvoi toutes les informations
 
     plt.show()"""
 
-def getreset():
+def getreboot():
     if sys.platform == 'win32':
         os.system('shutdown -r -t 0')
     elif sys.platform == 'linux':

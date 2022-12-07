@@ -19,7 +19,7 @@ class Client:
         self.message = ''
         self.iskilled = False
 
-    def connection(self):
+    def connexion(self):
         self.clsocket.connect((self.host, self.port))
         
         thread = threading.Thread(target=self.reception)
@@ -38,6 +38,18 @@ class Client:
         
     def kill(self):
         self.iskilled = True
+        self.clsocket.send(KILL.encode())
+        self.clsocket.close()
+        print('Fermeture du client')
+
+    def reset(self):
+        self.clsocket.send(RESET.encode())
+        self.clsocket.close()
+        print('Redémarrage du serveur')
+
+    def disconnect(self):
+        self.iskilled = True
+        self.clsocket.send(DISCONNECT.encode())
         self.clsocket.close()
         print('Fermeture du client')
 
@@ -45,7 +57,7 @@ class Client:
 if __name__ == '__main__':
     client = Client(HOST, PORT)
     try:
-        client.connection()
+        client.connexion()
         #client2 = Client(HOST, int(sys.argv[1]))
         message = ''
         while message != DISCONNECT and message != KILL: 
