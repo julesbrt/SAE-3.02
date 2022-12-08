@@ -91,19 +91,23 @@ class App(QMainWindow):
             msg.exec()
 
     def closeEvent(self, _e: QCloseEvent): # <--- Fermeture de l'application depuis la croix Windows
-        box = QMessageBox()
-        box.setWindowTitle("Quitter ?")
-        box.setText("Voulez vous quitter ?")
-        box.addButton(QMessageBox.Yes)
-        box.addButton(QMessageBox.No)
+        try:
+            box = QMessageBox()
+            box.setWindowTitle("Quitter ?")
+            box.setText("Voulez vous quitter ?")
+            box.addButton(QMessageBox.Yes)
+            box.addButton(QMessageBox.No)
 
-        ret = box.exec()
+            ret = box.exec()
 
-        if ret == QMessageBox.Yes:
-            client.kill()
+            if ret == QMessageBox.Yes:
+                client.kill()
+                QCoreApplication.exit(0)
+            else:
+                _e.ignore()
+        except OSError:
             QCoreApplication.exit(0)
-        else:
-            _e.ignore()
+
 
 
 if __name__ == '__main__':

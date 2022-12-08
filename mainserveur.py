@@ -36,9 +36,7 @@ class Serveur:
                 while msg != kill and msg != reset and msg != disconnect:
                     try:
                         msg = conn.recv(1024).decode()
-                    except:
-                        break
-                    else:
+                    except ConnectionResetError:
                         print("Message reçu: " + msg)
 
                         rep = commandes.reponse(msg)
