@@ -21,7 +21,6 @@ class Client:
 
     def connexion(self):
         self.clsocket.connect((self.host, self.port))
-        
         thread = threading.Thread(target=self.reception)
         thread.start()
         # print('Fermeture du client')

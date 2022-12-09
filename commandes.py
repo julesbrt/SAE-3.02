@@ -113,16 +113,14 @@ def getall():  # fonction qui renvoi toutes les informations
 
 
 
-"""def getgraph(self):
+"""def getgraph():
     import matplotlib.pyplot as plt
     from matplotlib.animation import FuncAnimation
     from psutil import cpu_percent
-
     x = []
     y = []
     longueur = 200 
     figure = plt.figure(figsize=(10, 6)) # Création de la figure
-
     def graph(i):
         x.append(i)
         y.append(cpu_percent())
@@ -134,17 +132,17 @@ def getall():  # fonction qui renvoi toutes les informations
         else:
             plt.cla()
             plt.plot(y[-longueur:], 'b' ,label='Utilisation du processeur')
-
         plt.ylim(0, 100) # Limitation de l'axe des ordonnées
         plt.xlabel('Temps (s)') # Label de l'axe des abscisses
         plt.ylabel('Utilisation du processeur (%)') # Label de l'axe des ordonnées
         plt.legend(loc='upper right') # Affichage de la légende
         plt.tight_layout() # Ajustement de la figure
-
-
     ani = FuncAnimation(plt.gcf(), graph, interval=1000)
 
-    plt.show()"""
+    plt.show()
+
+getgraph()
+"""
 
 def getreboot():
     if sys.platform == 'win32':

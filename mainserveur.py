@@ -1,10 +1,9 @@
 import socket
-import platform
 import commandes
 import sys
 
-host = '127.0.0.1'
-port = int(10000)
+HOST = '127.0.0.1'
+PORT = int(input("Port: "))
 
 # déconnexion de l’interface permettant de libérer la machine monitorée pour permettre de libérer le serveur pour d’autres requêtes
 disconnect = 'disconnect'
@@ -23,7 +22,7 @@ class Serveur:
         while msg != kill:
             socketserv = socket.socket()
             try:
-                socketserv.bind((host, port))
+                socketserv.bind((HOST, PORT))
             except OSError:
                 print("Le port est déjà utilisé")
                 sys.exit()
@@ -36,9 +35,11 @@ class Serveur:
                 while msg != kill and msg != reset and msg != disconnect:
                     try:
                         msg = conn.recv(1024).decode()
-                    except ConnectionResetError:
                         print("Message reçu: " + msg)
-
+                    except ConnectionResetError:
+                        print("Le client s'est déconnecté")
+                        break
+                    else:          
                         rep = commandes.reponse(msg)
                         conn.send(rep.encode())
                         print("Réponse envoyée: " + rep)
