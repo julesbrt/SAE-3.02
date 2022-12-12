@@ -15,8 +15,10 @@ def reponse(msg):  # fonction de réponse
         return getram()
 
     elif msg == 'CPU':
+        getgraph()
         return getcpu()
-
+  
+        
     elif msg == 'IP':
         return getip()
 
@@ -111,9 +113,7 @@ def getall():  # fonction qui renvoi toutes les informations
     return f"OS: {getos()}\n RAM: {getram()}\n CPU: {getcpu()}\n IP: {getip()}\n Name: {getname()}"
 
 
-
-
-"""def getgraph():
+def getgraph():
     import matplotlib.pyplot as plt
     from matplotlib.animation import FuncAnimation
     from psutil import cpu_percent
@@ -141,8 +141,8 @@ def getall():  # fonction qui renvoi toutes les informations
 
     plt.show()
 
-getgraph()
-"""
+    
+
 
 def getreboot():
     if sys.platform == 'win32':
