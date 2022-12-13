@@ -27,25 +27,27 @@ class Serveur:
                 print("Le port est déjà utilisé")
                 sys.exit()
             socketserv.listen(1)
+            try:
+                while msg != kill and msg != reset:
+                    conn, address = socketserv.accept()
+                    print("Connection à " + str(address))
 
-            while msg != kill and msg != reset:
-                conn, address = socketserv.accept()
-                print("Connection à " + str(address))
-
-                while msg != kill and msg != reset and msg != disconnect:
-                    try:
-                        msg = conn.recv(1024).decode()
-                        print("Message reçu: " + msg)
-                    except ConnectionResetError:
-                        print("Le client s'est déconnecté")
-                        break
-                    else:          
-                        rep = commandes.reponse(msg, shell)
-                        conn.send(rep.encode())
-                        print("Réponse envoyée: " + rep)
-                conn.close()
-                print('Connexion fermée avec: ', str(address))
-            # faire le reset
+                    while msg != kill and msg != reset and msg != disconnect:
+                        try:
+                            msg = conn.recv(1024).decode()
+                            print("Message reçu: " + msg)
+                        except ConnectionResetError:
+                            print("Le client s'est déconnecté")
+                            break
+                        else:          
+                            rep = commandes.reponse(msg, shell)
+                            conn.send(rep.encode())
+                            print("Réponse envoyée: " + rep)
+                    conn.close()
+                    print('Connexion fermée avec: ', str(address))
+            except ConnectionAbortedError:
+                print("Le client s'est déconnecté")
+                # faire le reset
         socketserv.close()
         print('Fermeture du serveur')
 

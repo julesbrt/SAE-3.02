@@ -84,7 +84,7 @@ class App(QMainWindow):
         try:
             HOST = self.__list.currentText().split(",")[0]
             PORT = int(self.__list.currentText().split(",")[1])
-            client = Client(HOST, PORT)
+            self.client = Client(HOST, PORT)
             client.connexion()
             self.__affichage.append("Connexion réussie")
             self.__etat.setText("Connecté")
@@ -96,7 +96,7 @@ class App(QMainWindow):
             client.disconnect()
             self.__affichage.append("Déconnexion réussie")
             self.__etat.setText("Déconnecté")
-        except:
+        except ConnectionAbortedError:
             self.__affichage.append("Déconnexion échouée")
 
     def _actionFermSrv(self):
@@ -123,6 +123,7 @@ class App(QMainWindow):
                 self.__affichage.append("Commande envoyée : " + self.txtcmd)
                 client.envoi(self.txtcmd)
           
+
         except Exception as e:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
