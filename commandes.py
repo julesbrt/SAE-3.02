@@ -7,7 +7,7 @@ import json  # sera utilisé si j'ai le temps une fois les principales fonctionn
 import os
 
 
-def reponse(msg):  # fonction de réponse
+def reponse(msg, shell: str = "debase"):  # fonction de réponse
     if msg == 'OS':
         return getos()
 
@@ -17,7 +17,6 @@ def reponse(msg):  # fonction de réponse
     elif msg == 'CPU':
         getgraph()
         return getcpu()
-  
         
     elif msg == 'IP':
         return getip()
@@ -41,7 +40,41 @@ def reponse(msg):  # fonction de réponse
         return ()
 
     else:
-        return 'Commande inconnue'
+        if sys.platform == 'win32':
+            p = (
+                subprocess.Popen(
+                    msg,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    encoding='cp850'
+                )
+            )
+            out, err = p.communicate()
+            if err == None:
+                err = ""
+            if out == None:
+                out = ""
+            return out + err
+
+        elif sys.platform == 'linux':
+            return (
+                subprocess.Popen(
+                    msg,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    encoding='utf-8'
+                ).stdout.read()
+            )
+        elif sys.platform == 'darwin':
+            return (
+                subprocess.Popen(
+                    msg,
+                    shell=True,
+                    stdout=subprocess.PIPE,
+                    encoding='utf-8'
+                ).stdout.read()
+            )
+
 
 
 def getos():  # fonction qui renvoi le système d'exploitation

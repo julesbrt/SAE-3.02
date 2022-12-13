@@ -46,16 +46,16 @@ class Main(QMainWindow):
     
     def _actionCo(self):
         try:
-            HOST = self.__enthost.text()
-            PORT = int(self.__entport.text())
-            client = Client(HOST, PORT)
+            host = self.__enthost.text()
+            port = int(self.__entport.text())
+            client = Client(host, port)
             client.connexion()
             self.__etat.setText("Connecté")
-            diag = NvServ(HOST,PORT)
+            diag = NvServ(host,port)
             diag.show()
             diag.exec()
-        except:
-            self.__etat.setText("Erreur de connexion")
+        except Exception as e:
+            self.__etat.setText(f"Erreur de connexion ({e})")
 
   
     def closeEvent(self, _e: QCloseEvent): # <--- Fermeture de l'application depuis la croix Windows

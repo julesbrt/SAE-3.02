@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import * #QApplication, QMainWindow, QWidget, QGridLayout, 
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QCloseEvent
 
+
 cpu = int(psutil.cpu_percent())
 client = Client(HOST, PORT)
 letxt = open("host.txt", "r")
@@ -74,21 +75,21 @@ class App(QMainWindow):
 
     def _actionInfo(self):
         msg = QMessageBox()
-        message = "Voici la liste des commandes disponilbes : \n\n      Commandes simples :\nOS : affiche l'OS \nIP : affiche l'IP \nName : affiche le nom \nCPU : affiche le % d'uitilisation du CPU \nRAM : affiche la mémoire totale, mémoire utilisée et mémoire libre restante \n\n        Commandes avancées : \nDisconnect : déconnexion de l'interface \nConnexion information : affiche les informations de connexion \nKill : arrête le serveur \nReset : redémarre le serveur \n\n       Commandes libres : \nToutes les commandes libres sont disponibles "
+        message = "Voici la liste des commandes disponilbes : \n\n      Commandes simples :\nOS : affiche l'OS \nIP : affiche l'IP \nName : affiche le nom \nCPU : affiche le % d'uitilisation du CPU \nRAM : affiche la mémoire totale, mémoire utilisée et mémoire libre restante \ngetall : affiche toutes les informations \n\n        Commandes avancées : \nDisconnect : déconnexion de l'interface \nConnexion information : affiche les informations de connexion \nKill : arrête le serveur \nReset : redémarre le serveur \n\n       Commandes libres : \nToutes les commandes libres sont disponibles "
         msg.setIcon(QMessageBox.Information)
         msg.setText(message)
         msg.exec()
 
     def _actionCo(self):
         try:
-            HOST = self.__list.currentText.split(",")[0]
-            PORT = int(self.__list.currentText.split(",")[1])
+            HOST = self.__list.currentText().split(",")[0]
+            PORT = int(self.__list.currentText().split(",")[1])
             client = Client(HOST, PORT)
             client.connexion()
             self.__affichage.append("Connexion réussie")
             self.__etat.setText("Connecté")
-        except:
-            self.__affichage.append("Connexion échouée")
+        except Exception as e:
+            self.__affichage.append(f"Connexion échouée ({e})")
         
     def _actionDeco(self):
         try:
@@ -122,11 +123,10 @@ class App(QMainWindow):
                 self.__affichage.append("Commande envoyée : " + self.txtcmd)
                 client.envoi(self.txtcmd)
           
-                
-        except:
+        except Exception as e:
             msg = QMessageBox()
             msg.setIcon(QMessageBox.Warning)
-            msg.setText("Le serveur n'est pas connecté")
+            msg.setText(f"Le serveur n'est pas connecté ({e})")
             msg.exec()
 
     def _actionNvserv(self):

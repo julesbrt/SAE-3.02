@@ -1,6 +1,7 @@
 import socket
 import threading
 import sys
+import time
 
 HOST = '127.0.0.1'
 PORT = 10000
@@ -62,6 +63,7 @@ if __name__ == '__main__':
         while message != DISCONNECT and message != KILL: 
             message = input('Entrer une commande: ')
             client.envoi(message)
+            time.sleep(0.05)
             #client2.envoi(message)
     except KeyboardInterrupt:
         client.kill()
