@@ -29,6 +29,7 @@ class Serveur:
             socketserv.listen(1)
             try:
                 while msg != kill and msg != reset:
+                    print("En attente de connexion")
                     conn, address = socketserv.accept()
                     print("Connection à " + str(address))
 
@@ -41,8 +42,11 @@ class Serveur:
                             break
                         else:          
                             rep = commandes.reponse(msg, shell)
-                            conn.send(rep.encode())
-                            print("Réponse envoyée: " + rep)
+                            try:
+                                conn.send(rep.encode())
+                                print("Réponse envoyée: " + rep)
+                            except ConnectionResetError:
+                                break
                     conn.close()
                     print('Connexion fermée avec: ', str(address))
             except ConnectionAbortedError:

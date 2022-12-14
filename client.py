@@ -13,15 +13,14 @@ RESET = 'reset'  # reset du serveur
 msgserv = ''
 
 class Client:
-    def __init__(self, host, port):
+    def __init__(self, affichage):
         self.clsocket = socket.socket()
-        self.port = port
-        self.host = host
         self.message = ''
         self.iskilled = False
+        self.__affichage = affichage
 
-    def connexion(self):
-        self.clsocket.connect((self.host, self.port))
+    def connexion(self, host, port):
+        self.clsocket.connect((host, port))
         thread = threading.Thread(target=self.reception)
         thread.start()
         # print('Fermeture du client')
@@ -33,8 +32,13 @@ class Client:
     def reception(self):
         msgserv = ""
         while message != DISCONNECT and msgserv != DISCONNECT and message != KILL and msgserv != KILL and self.iskilled == False:
-            msgserv = self.clsocket.recv(1024).decode()
-            print(msgserv)
+            try:
+                msgserv = self.clsocket.recv(1024).decode()
+                self.__affichage.append(msgserv)
+                print(msgserv)
+            except ConnectionAbortedError:
+                print("Le serveur s'est déconnecté")
+                break
         
     def kill(self):
         self.iskilled = True

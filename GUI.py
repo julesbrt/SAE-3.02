@@ -7,7 +7,6 @@ from PyQt5.QtGui import QCloseEvent
 
 
 cpu = int(psutil.cpu_percent())
-client = Client(HOST, PORT)
 letxt = open("host.txt", "r")
 text = letxt.read()
 text = text.split("\n")
@@ -41,6 +40,8 @@ class App(QMainWindow):
         self.__btnnvserv = QPushButton("Ajouter un serveur")
 
         self.__cpubar = QProgressBar()
+
+        self.client = Client(self.__affichage)
 
 
         self.grid.addWidget(self.__btnnvserv, 0, 0, 1, 1)
@@ -82,10 +83,9 @@ class App(QMainWindow):
 
     def _actionCo(self):
         try:
-            HOST = self.__list.currentText().split(",")[0]
-            PORT = int(self.__list.currentText().split(",")[1])
-            self.client = Client(HOST, PORT)
-            client.connexion()
+            host = self.__list.currentText().split(",")[0]
+            port = int(self.__list.currentText().split(",")[1])
+            self.client.connexion(host, port)
             self.__affichage.append("Connexion réussie")
             self.__etat.setText("Connecté")
         except Exception as e:
@@ -93,15 +93,15 @@ class App(QMainWindow):
         
     def _actionDeco(self):
         try:
-            client.disconnect()
+            self.client.disconnect()
             self.__affichage.append("Déconnexion réussie")
             self.__etat.setText("Déconnecté")
-        except ConnectionAbortedError:
+        except OSError:
             self.__affichage.append("Déconnexion échouée")
 
     def _actionFermSrv(self):
         try:
-            client.kill()
+            self.client.kill()
             self.__affichage.append("Serveur fermé")
             self.__etat.setText("Déconnecté")
         except:
@@ -110,18 +110,18 @@ class App(QMainWindow):
     def _actionEnv(self):
         try:
             if self.__cmd.text() == "kill":
-                client.kill()
+                self.client.kill()
                 self.__etat.setText("Déconnecté")
             elif self.__cmd.text() == "reset":
-                client.reset()
+                self.client.reset()
                 self.__etat.setText("Déconnecté")
             elif self.__cmd.text() == "disconnect":
-                client.disconnect()
+                self.client.disconnect()
                 self.__etat.setText("Déconnecté")
             else:
                 self.txtcmd = self.__cmd.text()
                 self.__affichage.append("Commande envoyée : " + self.txtcmd)
-                client.envoi(self.txtcmd)
+                self.client.envoi(self.txtcmd)
           
 
         except Exception as e:
@@ -146,7 +146,7 @@ class App(QMainWindow):
             ret = box.exec()
 
             if ret == QMessageBox.Yes:
-                client.kill()
+                self.client.kill()
                 QCoreApplication.exit(0)
             else:
                 _e.ignore()

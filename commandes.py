@@ -122,21 +122,6 @@ def getip():  # fonction qui renvoi l'adresse IP du serveur en fonction de son O
             'ifconfig en0 | grep inet | awk \'$1=="inet" {print $2}\'', shell=True, stdout=subprocess.PIPE).stdout.read().decode()
         return ip  # trouvé sur internet pusique je n'ai pas de Mac pour tester la commande
 
-    # version en utilisant psutil
-
-    """from socket import AF_INET
-    from ipaddress import IPv4Network
-
-    def get_ip():
-        ipaddr = []    
-        for nic, addrs in psutil.net_if_addrs().items():
-            for addr in addrs:
-                address = addr.address
-                # Permet d'ignorer les adresses de type 169.254.x.x sur mon ordinateur
-                if addr.family == AF_INET and not address.startswith("169.254"):
-                    ipaddr.append(f"{address}/{IPv4Network('0.0.0.0/' +  addr.netmask).prefixlen}")
-        return ipaddr"""
-
 
 def getname():  # fonction qui renvoi le nom du serveur
     return platform.node()
