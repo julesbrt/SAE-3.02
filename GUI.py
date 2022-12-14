@@ -4,9 +4,13 @@ from client import *
 from PyQt5.QtWidgets import * #QApplication, QMainWindow, QWidget, QGridLayout, QPushButton, QLabel, QLineEdit, QMessageBox, QProgressBar, QTextBrowser,
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtGui import QCloseEvent
+from PyQt5.QtCore import Qt
 
 
 cpu = int(psutil.cpu_percent())
+ram = int(psutil.virtual_memory().percent)
+disk = int(psutil.disk_usage('/').percent)
+
 letxt = open("host.txt", "r")
 text = letxt.read()
 text = text.split("\n")
@@ -19,7 +23,7 @@ class App(QMainWindow):
         self.txtcmd = ""
         self.cmd = ["OS", "IP", "Name", "CPU", "RAM", "Disconnect", "Connexion information", "kill", "reset"]
         widget = QWidget()
-        self.resize(500, 400) # taille de la fenêtre
+        self.resize(1200, 800) # taille de la fenêtre
         self.setWindowTitle('SAE 3.02')
         self.setCentralWidget(widget)
         self.grid = QGridLayout()
@@ -37,9 +41,11 @@ class App(QMainWindow):
         self.__list = QComboBox()
         self.__list.addItems(text)
         self.__etat = QLabel("Déconnecté")
+        self.__etat.setStyleSheet("background-color: red")
         self.__btnnvserv = QPushButton("Ajouter un serveur")
+        self.__btninfos = QPushButton("Infos sur la connexion")
 
-        self.__cpubar = QProgressBar()
+        
 
         self.client = Client(self.__affichage)
 
@@ -52,17 +58,17 @@ class App(QMainWindow):
 
         self.grid.addWidget(self.__affichage, 1, 1, 1, 1)
         
-        self.grid.addWidget(self.__affichetat, 0, 1, 1, 1)
-        self.grid.addWidget(self.__etat, 0, 2, 1, 1)
+        self.grid.addWidget(self.__affichetat, 0, 2, 1, 1)
+        self.grid.addWidget(self.__etat, 0, 3, 1, 1)
         
         
         self.grid.addWidget(self.__info, 1, 2, 1, 1)
         self.grid.addWidget(self.__entrcmd, 3, 0, 1, 1)
         self.grid.addWidget(self.__cmd, 3, 1, 1, 1)
         self.grid.addWidget(self.__btnenv, 3, 2, 1, 1)
+        self.grid.addWidget(self.__btninfos, 2, 3, 1, 1)
 
-        self.__cpubar.setValue(cpu)
-        self.grid.addWidget(self.__cpubar, 4, 1, 1, 1)
+        
         
         
         self.__info.clicked.connect(self._actionInfo)
@@ -70,7 +76,10 @@ class App(QMainWindow):
         self.__btndeco.clicked.connect(self._actionDeco)
         self.__btnfermsrv.clicked.connect(self._actionFermSrv)
         self.__btnenv.clicked.connect(self._actionEnv)
+        self.__cmd.returnPressed.connect(self._actionEnv)
         self.__btnnvserv.clicked.connect(self._actionNvserv)
+        self.__btninfos.clicked.connect(self._actionInfos)
+
 
 
 
@@ -88,6 +97,7 @@ class App(QMainWindow):
             self.client.connexion(host, port)
             self.__affichage.append("Connexion réussie")
             self.__etat.setText("Connecté")
+            self.__etat.setStyleSheet("background-color: green")
         except Exception as e:
             self.__affichage.append(f"Connexion échouée ({e})")
         
@@ -96,6 +106,7 @@ class App(QMainWindow):
             self.client.disconnect()
             self.__affichage.append("Déconnexion réussie")
             self.__etat.setText("Déconnecté")
+            self.__etat.setStyleSheet("background-color: red")
         except OSError:
             self.__affichage.append("Déconnexion échouée")
 
@@ -104,6 +115,7 @@ class App(QMainWindow):
             self.client.kill()
             self.__affichage.append("Serveur fermé")
             self.__etat.setText("Déconnecté")
+            self.__etat.setStyleSheet("background-color: red")
         except:
             self.__affichage.append("Serveur déjà fermé")
 
@@ -112,17 +124,20 @@ class App(QMainWindow):
             if self.__cmd.text() == "kill":
                 self.client.kill()
                 self.__etat.setText("Déconnecté")
+                self.__etat.setStyleSheet("background-color: red")
             elif self.__cmd.text() == "reset":
                 self.client.reset()
                 self.__etat.setText("Déconnecté")
+                self.__etat.setStyleSheet("background-color: red")
             elif self.__cmd.text() == "disconnect":
                 self.client.disconnect()
                 self.__etat.setText("Déconnecté")
+                self.__etat.setStyleSheet("background-color: red")
             else:
                 self.txtcmd = self.__cmd.text()
                 self.__affichage.append("Commande envoyée : " + self.txtcmd)
                 self.client.envoi(self.txtcmd)
-          
+                self.__cmd.clear()
 
         except Exception as e:
             msg = QMessageBox()
@@ -132,6 +147,11 @@ class App(QMainWindow):
 
     def _actionNvserv(self):
         diag = NvServ(HOST,PORT)
+        diag.show()
+        diag.exec()
+    
+    def _actionInfos(self):
+        diag = Infos()
         diag.show()
         diag.exec()
 
@@ -190,7 +210,38 @@ class NvServ(QDialog):
                 msg.setText("Erreur")
                 msg.exec()
          
+class Infos(QDialog):
+    def __init__(self):
+            super().__init__()
+            self.setWindowTitle("Infos sur la connexion")
+            self.resize(300, 100)
 
+            self.__cpubar = QProgressBar()
+            self.__cpubar.setValue(cpu)
+            self.__cpubar.setFormat("CPU : %p%")
+            self.__cpubar.setStyleSheet("background-color: green")
+            self.__cpubar.setOrientation(Qt.Horizontal)
+            self.__cpubar.setTextVisible(True)
+            self.__rambar = QProgressBar()
+            self.__rambar.setValue(ram)
+            self.__rambar.setFormat("RAM : %p%")
+            self.__rambar.setStyleSheet("background-color: green")
+            self.__rambar.setOrientation(Qt.Horizontal)
+            self.__rambar.setTextVisible(True)
+            self.__diskbar = QProgressBar()
+            self.__diskbar.setValue(disk)
+            self.__diskbar.setFormat("DISK : %p%")
+            self.__diskbar.setStyleSheet("background-color: green")
+            self.__diskbar.setOrientation(Qt.Horizontal)
+            self.__diskbar.setTextVisible(True)
+
+            self.__grid = QGridLayout()
+            self.setLayout(self.__grid)
+            self.__grid.addWidget(self.__cpubar, 0, 0, 1, 1)
+            self.__grid.addWidget(self.__rambar, 1, 0, 1, 1)
+            self.__grid.addWidget(self.__diskbar, 2, 0, 1, 1)
+
+            
 
 
 if __name__ == '__main__':

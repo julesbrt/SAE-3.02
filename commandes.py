@@ -46,14 +46,12 @@ def reponse(msg, shell: str = "debase"):  # fonction de réponse
                     msg,
                     shell=True,
                     stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
                     encoding='cp850'
                 )
             )
-            out, err = p.communicate()
-            if err == None:
-                err = ""
-            if out == None:
-                out = ""
+            out, err = p.stdout.read(), p.stderr.read()
+
             return out + err
 
         elif sys.platform == 'linux':
