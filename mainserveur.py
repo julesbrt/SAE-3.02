@@ -16,7 +16,6 @@ reset = 'reset'  # reset du serveur
 class Serveur:
     def __init__(self, port, host):
 
-        cin: str = ""
         shell: str = "debase"
         msg = ""
         while msg != kill:

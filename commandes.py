@@ -4,7 +4,7 @@ import psutil
 import subprocess
 import sys
 import json  # sera utilisé si j'ai le temps une fois les principales fonctionnalités implémentées
-import os
+
 
 
 def reponse(msg, shell: str = "debase"):  # fonction de réponse
@@ -118,7 +118,7 @@ def getip():  # fonction qui renvoi l'adresse IP du serveur en fonction de son O
     elif sys.platform == 'darwin':
         ip = subprocess.Popen(
             'ifconfig en0 | grep inet | awk \'$1=="inet" {print $2}\'', shell=True, stdout=subprocess.PIPE).stdout.read().decode()
-        return ip  # trouvé sur internet pusique je n'ai pas de Mac pour tester la commande
+        return ip  # n'a pas pu être tester puisque je n'ai pas de Mac
 
 
 def getname():  # fonction qui renvoi le nom du serveur
@@ -156,17 +156,6 @@ def getgraph():
     ani = FuncAnimation(plt.gcf(), graph, interval=1000)
 
     plt.show()
-
-    
-
-
-def getreboot():
-    if sys.platform == 'win32':
-        os.system('shutdown -r -t 0')
-    elif sys.platform == 'linux':
-        os.system('reboot')
-    elif sys.platform == 'darwin':
-        os.system('sudo shutdown -r now')
 
 def main():
     mainserveur.Serveur()
