@@ -43,7 +43,7 @@ class App(QMainWindow):
         self.__etat = QLabel("Déconnecté")
         self.__etat.setStyleSheet("background-color: red")
         self.__btnnvserv = QPushButton("Ajouter un serveur")
-        self.__btninfos = QPushButton("Infos sur la connexion")
+        self.__btninfos = QPushButton("Infos sur le serveur")
 
         
 
